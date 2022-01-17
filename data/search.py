@@ -16,6 +16,7 @@ logging.basicConfig(level=logging.INFO)
 index = []
 inverted_index = {}
 stemmer = SnowballStemmer(language="english")
+vectorizer = TfidfVectorizer(min_df=1)
 
 
 def build_index() -> None:
@@ -49,12 +50,12 @@ def score(query, document) -> float:
     stem_title = stemmer_str(document.title, return_list=False)
     stem_author = stemmer_str(document.author, return_list=False)
 
-    vect = TfidfVectorizer(min_df=1)
-    tfidf_title = vect.fit_transform([stem_query, stem_title])
-    tfidf_author = vect.fit_transform([stem_query, stem_author])
+    tfidf_title = vectorizer.fit_transform([stem_query, stem_title])
+    tfidf_author = vectorizer.fit_transform([stem_query, stem_author])
+
     csim = max(cosine_sim(tfidf_author), cosine_sim(tfidf_title))
 
-    return round(csim, ndigits=2)
+    return round(csim, 2)
 
 
 def cosine_sim(tfidf) -> float:
@@ -66,7 +67,6 @@ def stemmer_str(text: str, return_list=True) -> Union[list, bool]:
     """Применяем стемминг для строки
     :param text: строка, для которой делаем стемминг
     :param return_list: если True, возращаем список из слов; иначе - строку
-    :return:
     """
     new_text = list(tokenize(text, lowercase=True, deacc=True))
     stemmer_word = [stemmer.stem(word) for word in new_text]
@@ -91,6 +91,7 @@ def retrieve(query) -> List[Tuple[Document, float]]:
     stem_query = stemmer_str(query)
 
     for word in stem_query:
+        flag = False
         if word in inverted_index:
             for doc, did in inverted_index[word]:
                 if len(list(filter(lambda x: x[1] == did, all_candidates))) != 0:
@@ -99,7 +100,11 @@ def retrieve(query) -> List[Tuple[Document, float]]:
                 count_all += 1
                 if count_all == COUNT_ALL:
                     logging.info(f"All count of candidates more than {COUNT_ALL}")
+                    flag = True
                     break
+        if flag:
+            break
+
     logging.info(f"Build all candidates in {round(time() - start_time)} seconds.")
     start_time = time()
 

@@ -6,7 +6,7 @@ class Document:
         self.popularity = popularity
 
     def format(self):
-        return [self.author + "\n" + self.title, self.text[:200] + ' ...']
+        return [self.author + ": " + self.title, self.text[:200] + ' ...']
 
     def __str__(self):
         return f"{self.author} {self.title} {self.popularity}: {self.text}"
