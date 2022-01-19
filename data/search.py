@@ -73,9 +73,11 @@ def stemmer_str(text: str, return_list=True) -> Union[list, bool]:
     return stemmer_word if return_list else " ".join(stemmer_word)
 
 
-def retrieve(query) -> List[Tuple[Document, float]]:
+def retrieve(query, local_count_candidates=COUNT_CANDIDATES, return_base_index=False) -> List[Tuple[Document, float]]:
     """Подбираем самые релевантные документы к запросу
     :param query: запрос
+    :param local_count_candidates: максимальное кол-во релевантных документов
+    :param return_base_index:
     """
     if query == "":
         return []
@@ -118,7 +120,19 @@ def retrieve(query) -> List[Tuple[Document, float]]:
     start_time = time()
 
     x = dict(zip(candidates, scored))
-    x = {k: v for k, v in sorted(x.items(), key=lambda item: -item[1])}
+    x = {k: v for k, v in sorted(x.items(), key=lambda item: (-item[1], -item[0].popularity))}
+
+    if return_base_index:
+        return list(x.values())[:local_count_candidates]
+
+        '''
+        x1 = dict(zip(base_index, scored))
+        x1 = {k: v for k, v in sorted(x1.items(), key=lambda item: -item[1])}
+        base_index = []
+        for k, v in x1.items():
+            base_index.append((k, v))
+        return base_index[:local_count_candidates]
+        '''
 
     logging.info(f"Sort score in {round(time() - start_time)} seconds.")
     start_time = time()
@@ -127,8 +141,9 @@ def retrieve(query) -> List[Tuple[Document, float]]:
     for k, v in x.items():
         count_candidates += 1
         result.append((k, v))
-        if count_candidates == COUNT_CANDIDATES:
-            logging.info(f"The count of relevated candidates more than {COUNT_CANDIDATES}")
+        if count_candidates == local_count_candidates:
+            logging.info(f"The count of relevated candidates more than {local_count_candidates}")
             break
     logging.info(f"Build result in {round(time() - start_time)} seconds.")
+
     return result

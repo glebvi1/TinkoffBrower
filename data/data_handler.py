@@ -4,14 +4,14 @@ from time import time
 
 import pandas as pd
 
-from data import LIMIT
+from data import LIMIT, DATA_MODULE_PATH
 from model.Document import Document
 
 
 def build_data():
     start_time = time()
-    df_songs = pd.read_csv("data/lyrics_data.csv")
-    df_authors = pd.read_csv("data/artists-data.csv")
+    df_songs = pd.read_csv(f"{DATA_MODULE_PATH}/lyrics_data.csv")
+    df_authors = pd.read_csv(f"{DATA_MODULE_PATH}/artists-data.csv")
 
     documents = multiprocessing_doc(df_songs, df_authors, eda)
 

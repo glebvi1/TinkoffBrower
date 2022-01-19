@@ -9,4 +9,4 @@ class Document:
         return [self.author + ": " + self.title, self.text[:200] + ' ...']
 
     def __str__(self):
-        return f"{self.author} {self.title} {self.popularity}: {self.text}"
+        return f"{self.author} {self.title} {self.popularity}: {self.text[:200]}"
