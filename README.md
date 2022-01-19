@@ -13,7 +13,7 @@
 
 #Анализ
 1. Сделаны метрики: p@k, MRR, DCG
-2. Видео-пример загружено на гитхаб video.mp4; также есть по ссылки: https://drive.google.com/file/d/1WqnreXB5D3_4-J4rNmdfjnLOedAW2YcX/view?usp=sharing 
+2. Видео-пример загружено на гитхаб video.mp4
 
 #Поиск
 1. В среднем поиск работает не более 4 секунд
