@@ -15,7 +15,6 @@ def build_data():
 
     documents = multiprocessing_doc(df_songs, df_authors, eda)
 
-    logging.info(f"The count of data = {len(documents)}")
     logging.info(f"Build data in {round(time() - start_time)} seconds.")
 
     return documents
