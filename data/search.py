@@ -125,15 +125,6 @@ def retrieve(query, local_count_candidates=COUNT_CANDIDATES, return_base_index=F
     if return_base_index:
         return list(x.values())[:local_count_candidates]
 
-        '''
-        x1 = dict(zip(base_index, scored))
-        x1 = {k: v for k, v in sorted(x1.items(), key=lambda item: -item[1])}
-        base_index = []
-        for k, v in x1.items():
-            base_index.append((k, v))
-        return base_index[:local_count_candidates]
-        '''
-
     logging.info(f"Sort score in {round(time() - start_time)} seconds.")
     start_time = time()
 
